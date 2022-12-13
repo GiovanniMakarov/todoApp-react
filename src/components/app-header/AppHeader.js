@@ -1,11 +1,11 @@
 import './AppHeader.css';
-import SearchPanel from '../new-task-form'
+import NewTaskForm from '../new-task-form'
 
-const AppHeader = () => {
+const AppHeader = (props) => {
     return (
     <header className="header">
         <h1>todos</h1>
-        <SearchPanel />
+        <NewTaskForm onAddItem={props.onAddItem}/>
     </header>
     );
 }

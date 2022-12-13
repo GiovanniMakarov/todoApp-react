@@ -8,12 +8,13 @@ export default class TaskList extends Component {
         const {todos, onComplete, onDeleted} = this.props;
 
         const elements = todos.map(item => {
-            const { id, isComplete, isEditActive, isActive } = item;
+            
+            const { id, isComplete, isEditing, isActive } = item;
             let action;
 
             if (isComplete) {
                 action = 'completed';
-            } else if (isEditActive) {
+            } else if (isEditing) {
                 action = 'editing';
             } else if (isActive) {
                 action = null;
