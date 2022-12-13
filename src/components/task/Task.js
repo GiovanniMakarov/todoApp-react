@@ -1,18 +1,25 @@
+import { Component } from 'react';
 import './Task.css';
 
-const Task = ( {task} ) => {
-  
-  return (
-    <div className="view">
-      <input className="toggle" type="checkbox" />
-      <label>
-          <span className="description">{task}</span>
-          <span className="created">created 17 seconds ago</span>
-      </label>
-      <button className="icon icon-edit"></button>
-      <button className="icon icon-destroy"></button>
-    </div>
-  );
-}
+export default class Task extends Component {
 
-export default Task;
+
+  render () {
+    const { onComplete, onDeleted } = this.props
+
+    return (
+      <>
+        <div className="view">
+          <input className="toggle" type="checkbox" onClick={onComplete} />
+          <label>
+              <span className="description">{this.props.task}</span>
+              <span className="created">created 17 seconds ago</span>
+          </label>
+          <button className="icon icon-edit"></button>
+          <button className="icon icon-destroy" onClick={onDeleted}></button>
+        </div>
+        { this.props.isEditing ? <input type="text" className="edit" value="Editing task" /> : null }
+      </>
+    );
+  }
+}
