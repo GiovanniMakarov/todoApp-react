@@ -4,6 +4,8 @@ import AppHeader from "../app-header/AppHeader";
 import TaskList from "../task-list";
 import AppFooter from "../app-footer/AppFooter";
 
+import { formatDistanceToNow } from 'date-fns';
+
 
 export default class App extends Component {
 
@@ -11,9 +13,9 @@ export default class App extends Component {
 
     state = {
         TodoData: [
-            {id: 1, task: 'Completed task', isComplete: false },
-            {id: 2, task: 'Editing task', isComplete: false },
-            {id: 3, task: 'Active task', isComplete: false },
+            {id: 1, task: 'Completed task', isComplete: false, creationDate: new Date(), timeFromCreation: ''},
+            {id: 2, task: 'Editing task', isComplete: false, creationDate: new Date('2022 12 01 15:00'), timeFromCreation: '' },
+            {id: 3, task: 'Active task', isComplete: false, creationDate: new Date('2022 12 01 15:00'), timeFromCreation: '' },
         ],
         filter: 'all',
     }
@@ -36,12 +38,15 @@ export default class App extends Component {
     }
 
     onAddItem = (text) => {
+        if (text.length < 1) return;
+        
         this.setState(({ TodoData }) => {
             const newTask = {
                 id: this.maxID++,
                 task: text,
                 isComplete: false,
-                isEditing: false
+                creationDate: new Date(),
+                timeFromCreation: 'now',
             }
 
             const newArray = [
@@ -90,7 +95,24 @@ export default class App extends Component {
 
         idForDeleting.forEach((el) => this.onDeleted(el));
     }
-   
+
+    updateTimeFromCreation = () => {
+        const { TodoData } = this.state;
+
+        const newArray = TodoData.map((todo) => {
+            const { creationDate } = todo;
+            const timeFromCreation = formatDistanceToNow(creationDate);
+            return {
+                ...todo, timeFromCreation: timeFromCreation
+            }
+        })
+
+        this.setState( () => {
+            return {TodoData: newArray}
+        });
+    }
+
+
     render () {
         const { TodoData, filter } = this.state;
 
@@ -98,6 +120,8 @@ export default class App extends Component {
 
         const doneCount = TodoData.filter((el) => el.isComplete).length;
         const todoCount = TodoData.length - doneCount;
+
+        setInterval( () => this.updateTimeFromCreation(), 1000);
 
         return (
             <section className="todoapp">

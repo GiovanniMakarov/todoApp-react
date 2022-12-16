@@ -1,5 +1,6 @@
 import './AppFooter.css';
 import TaskFilter from '../tasks-filter/TaskFilter';
+import PropTypes from 'prop-types';
 
 const AppFooter = (props) => {
     const {itemsLeft, filter, onFilterChange, onClearCompleted} = props;
@@ -17,6 +18,18 @@ const AppFooter = (props) => {
           </button>
         </footer>
     )
+}
+
+AppFooter.defaultProps = {
+  onFilterChange: () => {},
+  onClearCompleted: () => {},
+}
+
+AppFooter.propTypes = {
+  onFilterChange: PropTypes.func,
+  onClearCompleted: PropTypes.func,
+  itemsLeft: PropTypes.number.isRequired,
+  filter: PropTypes.string.isRequired
 }
 
 export default AppFooter;
