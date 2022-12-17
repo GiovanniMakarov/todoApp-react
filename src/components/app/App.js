@@ -99,6 +99,8 @@ export default class App extends Component {
     updateTimeFromCreation = () => {
         const { TodoData } = this.state;
 
+        if (TodoData.length < 1) return;
+
         const newArray = TodoData.map((todo) => {
             const { creationDate } = todo;
             const timeFromCreation = formatDistanceToNow(creationDate);
@@ -106,6 +108,8 @@ export default class App extends Component {
                 ...todo, timeFromCreation: timeFromCreation
             }
         })
+
+        console.log('tick');
 
         this.setState( () => {
             return {TodoData: newArray}
