@@ -109,8 +109,6 @@ export default class App extends Component {
             }
         })
 
-        console.log('tick');
-
         this.setState( () => {
             return {TodoData: newArray}
         });
