@@ -1,22 +1,25 @@
-import './AppHeader.css';
-import NewTaskForm from '../new-task-form'
-import PropTypes from 'prop-types';
+import "./AppHeader.css";
+import PropTypes from "prop-types";
 
-const AppHeader = (props) => {
-    return (
+import NewTaskForm from "../new-task-form";
+
+function AppHeader(props) {
+  const { onAddItem } = props;
+
+  return (
     <header className="header">
-        <h1>todos</h1>
-        <NewTaskForm onAddItem={props.onAddItem}/>
+      <h1>todos</h1>
+      <NewTaskForm onAddItem={onAddItem} />
     </header>
-    );
+  );
 }
 
 AppHeader.defaultProps = {
-    onAddItem: () => {},
-}
+  onAddItem: () => {},
+};
 
 AppHeader.propTypes = {
-    onAddItem: PropTypes.func,
-}
+  onAddItem: PropTypes.func,
+};
 
 export default AppHeader;
