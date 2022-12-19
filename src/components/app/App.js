@@ -137,6 +137,8 @@ export default class App extends Component {
     const doneCount = TodoData.filter((el) => el.isComplete).length;
     const todoCount = TodoData.length - doneCount;
 
+    const uselessVar = 0;
+
     setInterval(() => this.updateTimeFromCreation(), 1000);
 
     return (
