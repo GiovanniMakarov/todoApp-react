@@ -27,10 +27,10 @@ export default class Task extends Component {
       <>
         <div className="view">
           <input className="toggle" type="checkbox" onClick={onComplete} checked={isChecked} onChange={() => {}} />
-          <div>
+          <label>
             <span className="description">{task}</span>
             <span className="created">{textTimeFromCreation}</span>
-          </div>
+          </label>
           <button type="button" className="icon icon-edit" aria-label="edit-button" />
           <button type="button" className="icon icon-destroy" onClick={onDeleted} aria-label="delete-button" />
         </div>

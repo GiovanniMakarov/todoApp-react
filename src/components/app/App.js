@@ -17,6 +17,7 @@ export default class App extends Component {
         isComplete: false,
         creationDate: new Date(),
         timeFromCreation: "",
+        isEditing: false,
       },
       {
         id: 2,
@@ -24,6 +25,7 @@ export default class App extends Component {
         isComplete: false,
         creationDate: new Date("2022 12 01 15:00"),
         timeFromCreation: "",
+        isEditing: false,
       },
       {
         id: 3,
@@ -31,6 +33,7 @@ export default class App extends Component {
         isComplete: false,
         creationDate: new Date("2022 12 01 15:00"),
         timeFromCreation: "",
+        isEditing: false,
       },
     ],
     filter: "all",
@@ -59,6 +62,7 @@ export default class App extends Component {
         isComplete: false,
         creationDate: new Date(),
         timeFromCreation: "now",
+        isEditing: false,
       };
 
       const newArray = [...TodoData, newTask];

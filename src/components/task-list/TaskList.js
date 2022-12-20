@@ -13,21 +13,20 @@ export default class TaskList extends Component {
   static propTypes = {
     onComplete: PropTypes.func,
     onDeleted: PropTypes.func,
-    todos: PropTypes.isRequired,
   };
 
   render() {
     const { todos, onComplete, onDeleted } = this.props;
 
     const elements = todos.map((item) => {
-      const { id, isComplete, isEditing, isActive } = item;
+      const { id, isComplete, isEditing } = item;
 
       let action;
       if (isComplete) {
         action = "completed";
       } else if (isEditing) {
         action = "editing";
-      } else if (isActive) {
+      } else {
         action = null;
       }
 
