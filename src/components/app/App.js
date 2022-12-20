@@ -13,7 +13,7 @@ export default class App extends Component {
     TodoData: [
       {
         id: 1,
-        task: "Completed task",
+        task: "Do smth",
         isComplete: false,
         creationDate: new Date(),
         timeFromCreation: "",
@@ -21,7 +21,7 @@ export default class App extends Component {
       },
       {
         id: 2,
-        task: "Editing task",
+        task: "Drink cofee",
         isComplete: false,
         creationDate: new Date("2022 12 01 15:00"),
         timeFromCreation: "",
@@ -29,9 +29,9 @@ export default class App extends Component {
       },
       {
         id: 3,
-        task: "Active task",
+        task: "Check mail",
         isComplete: false,
-        creationDate: new Date("2022 12 01 15:00"),
+        creationDate: new Date("2022 12 07 20:00"),
         timeFromCreation: "",
         isEditing: false,
       },
