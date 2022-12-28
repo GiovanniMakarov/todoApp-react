@@ -16,8 +16,10 @@ export default class NewTaskForm extends Component {
   };
 
   onInputChange = (event) => {
-    this.setState({
-      text: event.target.value,
+    this.setState(() => {
+      return {
+        text: event.target.value,
+      };
     });
   };
 

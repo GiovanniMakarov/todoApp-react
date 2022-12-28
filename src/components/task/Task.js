@@ -7,6 +7,8 @@ export default class Task extends Component {
   static defaultProps = {
     onComplete: () => {},
     onDeleted: () => {},
+    onEditingFlagSet: () => {},
+    onEditingTask: () => {},
   };
 
   static propTypes = {
@@ -14,10 +16,38 @@ export default class Task extends Component {
     onDeleted: PropTypes.func,
     timeFromCreation: PropTypes.string.isRequired,
     task: PropTypes.string.isRequired,
+    onEditingFlagSet: PropTypes.func,
+    onEditingTask: PropTypes.func,
+  };
+
+  state = {
+    text: this.props.task,
+  };
+
+  onEditInputChange = (event) => {
+    this.setState({
+      text: event.target.value,
+    });
+  };
+
+  onSubmitEdit = (event) => {
+    event.preventDefault();
+
+    this.props.onEditingTask(this.state.text);
+    this.props.onEditingFlagSet();
+  };
+
+  onExit = (event) => {
+    if (event.code === "Escape") {
+      this.props.onEditingFlagSet();
+      this.setState({
+        text: this.props.task,
+      });
+    }
   };
 
   render() {
-    const { onComplete, onDeleted, timeFromCreation, task } = this.props;
+    const { onComplete, onDeleted, onEditingFlagSet, timeFromCreation, task } = this.props;
     const isChecked = this.props.isComplete;
 
     let textTimeFromCreation = `created ${timeFromCreation} ago`;
@@ -31,10 +61,21 @@ export default class Task extends Component {
             <span className="description">{task}</span>
             <span className="created">{textTimeFromCreation}</span>
           </label>
-          <button type="button" className="icon icon-edit" aria-label="edit-button" />
+          <button type="button" className="icon icon-edit" onClick={onEditingFlagSet} aria-label="edit-button" />
           <button type="button" className="icon icon-destroy" onClick={onDeleted} aria-label="delete-button" />
         </div>
-        {this.props.isEditing ? <input type="text" className="edit" value="Editing task" /> : null}
+        {this.props.isEditing && (
+          <form onSubmit={this.onSubmitEdit} onBlur={this.onSubmitEdit}>
+            <input
+              type="text"
+              className="edit"
+              value={this.state.text}
+              onChange={this.onEditInputChange}
+              onKeyDown={this.onExit}
+              autoFocus
+            />
+          </form>
+        )}
       </>
     );
   }

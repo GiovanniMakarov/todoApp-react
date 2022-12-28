@@ -10,7 +10,7 @@ export default class App extends Component {
   maxID = 100;
 
   state = {
-    TodoData: [
+    todoData: [
       {
         id: 1,
         task: "Do smth",
@@ -40,22 +40,17 @@ export default class App extends Component {
   };
 
   onDoneClick = (id) => {
-    this.setState(({ TodoData }) => {
-      const idx = TodoData.findIndex((el) => el.id === id);
-      const newArray = [...TodoData];
-      newArray[idx].isComplete = !TodoData[idx].isComplete;
-
-      const oldItem = TodoData[idx];
-      const newItem = { ...oldItem, isComplete: !oldItem.isComplete };
-
-      return [...TodoData.slice(0, idx), newItem, ...TodoData.slice(idx + 1)];
+    this.setState(({ todoData }) => {
+      return {
+        todoData: this.toggleProperty(todoData, id, "isComplete"),
+      };
     });
   };
 
   onAddItem = (text) => {
     if (text.length < 1) return;
 
-    this.setState(({ TodoData }) => {
+    this.setState(({ todoData }) => {
       const newTask = {
         id: this.maxID++,
         task: text,
@@ -65,21 +60,44 @@ export default class App extends Component {
         isEditing: false,
       };
 
-      const newArray = [...TodoData, newTask];
+      const newArray = [...todoData, newTask];
 
       return {
-        TodoData: newArray,
+        todoData: newArray,
       };
     });
   };
 
   onDeleted = (id) => {
-    this.setState(({ TodoData }) => {
-      const idx = TodoData.findIndex((el) => el.id === id);
-      const newArray = [...TodoData.slice(0, idx), ...TodoData.slice(idx + 1)];
+    this.setState(({ todoData }) => {
+      const idx = todoData.findIndex((el) => el.id === id);
+      const newArray = [...todoData.slice(0, idx), ...todoData.slice(idx + 1)];
 
       return {
-        TodoData: newArray,
+        todoData: newArray,
+      };
+    });
+  };
+
+  onEditingFlagSet = (id) => {
+    this.setState(({ todoData }) => {
+      return {
+        todoData: this.toggleProperty(todoData, id, "isEditing"),
+      };
+    });
+  };
+
+  onEditingTask = (id, newText) => {
+    this.setState(({ todoData }) => {
+      const idx = todoData.findIndex((el) => el.id === id);
+
+      const oldItem = todoData[idx];
+      const newItem = { ...oldItem, task: newText };
+
+      const newArray = [...todoData.slice(0, idx), newItem, ...todoData.slice(idx + 1)];
+
+      return {
+        todoData: newArray,
       };
     });
   };
@@ -89,9 +107,9 @@ export default class App extends Component {
   };
 
   onClearCompleted = () => {
-    const { TodoData } = this.state;
+    const { todoData } = this.state;
 
-    const idForDeleting = TodoData.reduce((acc, cur) => {
+    const idForDeleting = todoData.reduce((acc, cur) => {
       if (cur.isComplete) {
         acc.push(cur.id);
       }
@@ -102,11 +120,11 @@ export default class App extends Component {
   };
 
   updateTimeFromCreation = () => {
-    const { TodoData } = this.state;
+    const { todoData } = this.state;
 
-    if (TodoData.length < 1) return;
+    if (todoData.length < 1) return;
 
-    const newArray = TodoData.map((todo) => {
+    const newArray = todoData.map((todo) => {
       const { creationDate } = todo;
       const timeFromCreation = formatDistanceToNow(creationDate);
       return {
@@ -116,9 +134,18 @@ export default class App extends Component {
     });
 
     this.setState(() => {
-      return { TodoData: newArray };
+      return { todoData: newArray };
     });
   };
+
+  toggleProperty(arr, id, propName) {
+    const idx = arr.findIndex((el) => el.id === id);
+
+    const oldItem = arr[idx];
+    const newItem = { ...oldItem, [propName]: !oldItem[propName] };
+
+    return [...arr.slice(0, idx), newItem, ...arr.slice(idx + 1)];
+  }
 
   filter(items, filter) {
     switch (filter) {
@@ -134,12 +161,12 @@ export default class App extends Component {
   }
 
   render() {
-    const { TodoData, filter } = this.state;
+    const { todoData, filter } = this.state;
 
-    const visibleTodos = this.filter(TodoData, filter);
+    const visibleTodos = this.filter(todoData, filter);
 
-    const doneCount = TodoData.filter((el) => el.isComplete).length;
-    const todoCount = TodoData.length - doneCount;
+    const doneCount = todoData.filter((el) => el.isComplete).length;
+    const todoCount = todoData.length - doneCount;
 
     setInterval(() => this.updateTimeFromCreation(), 1000);
 
@@ -147,7 +174,13 @@ export default class App extends Component {
       <section className="todoapp">
         <AppHeader onAddItem={this.onAddItem} />
         <section className="main">
-          <TaskList todos={visibleTodos} onComplete={this.onDoneClick} onDeleted={this.onDeleted} />
+          <TaskList
+            todos={visibleTodos}
+            onComplete={this.onDoneClick}
+            onDeleted={this.onDeleted}
+            onEditingFlagSet={this.onEditingFlagSet}
+            onEditingTask={this.onEditingTask}
+          />
           <AppFooter
             itemsLeft={todoCount}
             filter={filter}
