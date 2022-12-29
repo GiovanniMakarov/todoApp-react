@@ -47,7 +47,7 @@ export default class Task extends Component {
   };
 
   render() {
-    const { onComplete, onDeleted, onEditingFlagSet, timeFromCreation, task } = this.props;
+    const { onComplete, onDeleted, onEditingFlagSet, timeFromCreation, task, isEditing } = this.props;
     const isChecked = this.props.isComplete;
 
     let textTimeFromCreation = `created ${timeFromCreation} ago`;
@@ -64,7 +64,7 @@ export default class Task extends Component {
           <button type="button" className="icon icon-edit" onClick={onEditingFlagSet} aria-label="edit-button" />
           <button type="button" className="icon icon-destroy" onClick={onDeleted} aria-label="delete-button" />
         </div>
-        {this.props.isEditing && (
+        {isEditing && (
           <form onSubmit={this.onSubmitEdit} onBlur={this.onSubmitEdit}>
             <input
               type="text"

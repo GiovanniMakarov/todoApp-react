@@ -1,45 +1,35 @@
 import "./App.css";
 import { Component } from "react";
-import { formatDistanceToNow } from "date-fns";
+import { formatDistanceToNow, parseISO } from "date-fns";
+import { v4 as uuidv4 } from "uuid";
 
 import AppHeader from "../app-header/AppHeader";
 import TaskList from "../task-list";
 import AppFooter from "../app-footer/AppFooter";
 
 export default class App extends Component {
-  maxID = 100;
-
   state = {
-    todoData: [
-      {
-        id: 1,
-        task: "Do smth",
-        isComplete: false,
-        creationDate: new Date(),
-        timeFromCreation: "",
-        isEditing: false,
-      },
-      {
-        id: 2,
-        task: "Drink cofee",
-        isComplete: false,
-        creationDate: new Date("2022 12 01 15:00"),
-        timeFromCreation: "",
-        isEditing: false,
-      },
-      {
-        id: 3,
-        task: "Check mail",
-        isComplete: false,
-        creationDate: new Date("2022 12 07 20:00"),
-        timeFromCreation: "",
-        isEditing: false,
-      },
-    ],
+    todoData: [],
     filter: "all",
   };
 
+  componentDidMount() {
+    const todoDataLS = JSON.parse(localStorage.getItem("todoData"));
+
+    if (todoDataLS) {
+      this.setState({
+        todoData: todoDataLS,
+      });
+    }
+  }
+
   onDoneClick = (id) => {
+    let todoDataLS = JSON.parse(localStorage.getItem("todoData"));
+
+    todoDataLS = this.toggleProperty(todoDataLS, id, "isComplete");
+
+    localStorage.setItem("todoData", JSON.stringify(todoDataLS));
+
     this.setState(({ todoData }) => {
       return {
         todoData: this.toggleProperty(todoData, id, "isComplete"),
@@ -50,16 +40,25 @@ export default class App extends Component {
   onAddItem = (text) => {
     if (text.length < 1) return;
 
-    this.setState(({ todoData }) => {
-      const newTask = {
-        id: this.maxID++,
-        task: text,
-        isComplete: false,
-        creationDate: new Date(),
-        timeFromCreation: "now",
-        isEditing: false,
-      };
+    const newTask = {
+      id: uuidv4(),
+      task: text,
+      isComplete: false,
+      creationDate: new Date(),
+      timeFromCreation: "now",
+      isEditing: false,
+    };
 
+    let tasks = JSON.parse(localStorage.getItem("todoData"));
+
+    if (!tasks) {
+      tasks = [];
+    }
+
+    tasks.push(newTask);
+    localStorage.setItem("todoData", JSON.stringify(tasks));
+
+    this.setState(({ todoData }) => {
       const newArray = [...todoData, newTask];
 
       return {
@@ -69,17 +68,22 @@ export default class App extends Component {
   };
 
   onDeleted = (id) => {
-    this.setState(({ todoData }) => {
-      const idx = todoData.findIndex((el) => el.id === id);
-      const newArray = [...todoData.slice(0, idx), ...todoData.slice(idx + 1)];
+    const tasks = JSON.parse(localStorage.getItem("todoData"));
+    const newTasks = tasks.filter((el) => el.id !== id);
+    localStorage.setItem("todoData", JSON.stringify(newTasks));
 
+    this.setState(() => {
       return {
-        todoData: newArray,
+        todoData: newTasks,
       };
     });
   };
 
   onEditingFlagSet = (id) => {
+    const todoDataLS = JSON.parse(localStorage.getItem("todoData"));
+    const newData = this.toggleProperty(todoDataLS, id, "isEditing");
+    localStorage.setItem("todoData", JSON.stringify(newData));
+
     this.setState(({ todoData }) => {
       return {
         todoData: this.toggleProperty(todoData, id, "isEditing"),
@@ -88,16 +92,15 @@ export default class App extends Component {
   };
 
   onEditingTask = (id, newText) => {
-    this.setState(({ todoData }) => {
-      const idx = todoData.findIndex((el) => el.id === id);
+    const todoDataLS = JSON.parse(localStorage.getItem("todoData"));
+    const idx = todoDataLS.findIndex((el) => el.id === id);
+    todoDataLS[idx] = { ...todoDataLS[idx], task: newText };
 
-      const oldItem = todoData[idx];
-      const newItem = { ...oldItem, task: newText };
+    localStorage.setItem("todoData", JSON.stringify(todoDataLS));
 
-      const newArray = [...todoData.slice(0, idx), newItem, ...todoData.slice(idx + 1)];
-
+    this.setState(() => {
       return {
-        todoData: newArray,
+        todoData: todoDataLS,
       };
     });
   };
@@ -125,7 +128,11 @@ export default class App extends Component {
     if (todoData.length < 1) return;
 
     const newArray = todoData.map((todo) => {
-      const { creationDate } = todo;
+      let { creationDate } = todo;
+      if (typeof creationDate === "string") {
+        creationDate = parseISO(creationDate);
+      }
+
       const timeFromCreation = formatDistanceToNow(creationDate);
       return {
         ...todo,
@@ -148,12 +155,18 @@ export default class App extends Component {
   }
 
   filter(items, filter) {
+    const filters = {
+      all: "all",
+      active: "active",
+      completed: "completed",
+    };
+
     switch (filter) {
-      case "all":
+      case filters.all:
         return items;
-      case "active":
+      case filters.active:
         return items.filter((item) => !item.isComplete);
-      case "completed":
+      case filters.completed:
         return items.filter((item) => item.isComplete);
       default:
         return items;
@@ -172,7 +185,7 @@ export default class App extends Component {
 
     return (
       <section className="todoapp">
-        <AppHeader onAddItem={this.onAddItem} />
+        <AppHeader onAddItem={this.onAddItem} todos={todoData} />
         <section className="main">
           <TaskList
             todos={visibleTodos}

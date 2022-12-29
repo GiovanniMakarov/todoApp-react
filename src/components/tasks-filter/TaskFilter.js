@@ -2,6 +2,8 @@ import { Component } from "react";
 import "./TaskFilter.css";
 import PropTypes from "prop-types";
 
+const classNames = require("classnames");
+
 export default class TaskFilter extends Component {
   static defaultProps = {
     onFilterChange: () => {},
@@ -23,8 +25,9 @@ export default class TaskFilter extends Component {
     const { filter, onFilterChange } = this.props;
 
     const buttons = this.buttons.map(({ name, label }) => {
-      const isActive = filter === name;
-      const clazz = isActive ? "selected" : null;
+      const clazz = classNames({
+        selected: filter === name,
+      });
 
       return (
         <li key={name}>

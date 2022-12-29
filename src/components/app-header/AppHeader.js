@@ -4,12 +4,12 @@ import PropTypes from "prop-types";
 import NewTaskForm from "../new-task-form";
 
 function AppHeader(props) {
-  const { onAddItem } = props;
+  const { onAddItem, todos } = props;
 
   return (
     <header className="header">
       <h1>todos</h1>
-      <NewTaskForm onAddItem={onAddItem} />
+      <NewTaskForm onAddItem={onAddItem} todos={todos} />
     </header>
   );
 }

@@ -4,6 +4,8 @@ import PropTypes from "prop-types";
 
 import Task from "../task";
 
+const classNames = require("classnames");
+
 export default class TaskList extends Component {
   static defaultProps = {
     onComplete: () => {},
@@ -23,14 +25,10 @@ export default class TaskList extends Component {
     const elements = todos.map((item) => {
       const { id, isComplete, isEditing } = item;
 
-      let action;
-      if (isComplete) {
-        action = "completed";
-      } else if (isEditing) {
-        action = "editing";
-      } else {
-        action = null;
-      }
+      const action = classNames({
+        completed: isComplete,
+        editing: isEditing,
+      });
 
       return (
         <li key={id} className={action}>

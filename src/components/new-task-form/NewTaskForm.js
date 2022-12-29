@@ -24,20 +24,27 @@ export default class NewTaskForm extends Component {
   };
 
   onSubmit = (event) => {
+    const { onAddItem } = this.props;
+    const { text } = this.state;
+
     event.preventDefault();
 
-    this.props.onAddItem(this.state.text);
-    this.setState({
-      text: "",
+    onAddItem(text);
+
+    this.setState(() => {
+      return { text: "" };
     });
   };
 
   render() {
+    const { todos } = this.props;
+    const placeHolderText = todos.length > 0 ? "What needs to be done?" : "Add your first task here";
+
     return (
       <form onSubmit={this.onSubmit}>
         <input
           className="new-todo"
-          placeholder="What needs to be done?"
+          placeholder={placeHolderText}
           onChange={this.onInputChange}
           value={this.state.text}
         />
