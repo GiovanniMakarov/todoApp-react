@@ -39,6 +39,7 @@ export default class Task extends Component {
 
   onExit = (event) => {
     if (event.code === "Escape") {
+      event.preventDefault();
       this.props.onEditingFlagSet();
       this.setState({
         text: this.props.task,
